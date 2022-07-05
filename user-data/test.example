@@ -1,0 +1,33 @@
+#cloud-config
+autoinstall:
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: http://cn.archive.ubuntu.com/ubuntu
+    - arches:
+      - default
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  identity: # 用户设置,这里不能设置root
+    hostname: ubuntu-system
+    password: $6$bPQ6FGEIpMN4yrCL$I1QoyJyiSPKzNknP8Vl3hV4IxxTsqEPOk1nP97DAvJLv131I63yyzEtLb.rib0RT5CYK78RS3LtQazMn9hNQk/
+    realname: ubuntu
+    username: ubuntu
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  ssh:
+    allow-pw: true # 使用账号登陆
+    authorized-keys: []
+    install-server: true # 安装openssh-server
+  updates: security
+  version: 1
+  late-commands: []

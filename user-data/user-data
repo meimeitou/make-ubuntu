@@ -1,0 +1,42 @@
+#cloud-config
+autoinstall:
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: http://us.archive.ubuntu.com/ubuntu
+    - arches:
+      - default
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  identity: # 用户设置,这里不能设置root
+    hostname: ubuntu-system
+    password: $6$bPQ6FGEIpMN4yrCL$I1QoyJyiSPKzNknP8Vl3hV4IxxTsqEPOk1nP97DAvJLv131I63yyzEtLb.rib0RT5CYK78RS3LtQazMn9hNQk/
+    realname: yin
+    username: yin
+  network: # 网卡配置咯，设置dhcp,ipv6，static ip等
+    ethernets:
+      eth0:
+        dhcp4: true
+    version: 2
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  ssh:
+    allow-pw: true # 使用账号登陆
+    authorized-keys: []
+    install-server: true # 安装openssh-server
+  updates: security
+  version: 1
+  early-commands: # 在网络和磁盘初始化之前执行，这里可以修改init文件，因为文件在这些这里的命令后，会重新reload
+  - systemctl stop ssh
+  late-commands:
+  - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"/' /target/etc/default/grub # use eht0
+  - curtin in-target --target /target update-grub2

@@ -1,0 +1,5 @@
+*.iso
+*.img
+*.box
+.vagrant
+*.private

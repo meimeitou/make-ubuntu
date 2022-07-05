@@ -1,0 +1,107 @@
+#cloud-config
+autoinstall:
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: http://us.archive.ubuntu.com/ubuntu
+    - arches:
+      - default
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  identity:
+    hostname: yin
+    password: $6$bPQ6FGEIpMN4yrCL$I1QoyJyiSPKzNknP8Vl3hV4IxxTsqEPOk1nP97DAvJLv131I63yyzEtLb.rib0RT5CYK78RS3LtQazMn9hNQk/
+    realname: yin
+    username: yin
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  network:
+    ethernets:
+      enp0s3:
+        dhcp4: true
+    version: 2
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  storage:
+    config:
+    - ptable: gpt # 创建gpt磁盘分区，挂载sda
+      serial: VBOX_HARDDISK_VBd332c26e-bbe5cc7c
+      path: /dev/sda
+      wipe: superblock
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-sda
+    # when system fireware is biso. need 1M bios_grub.
+    # no need for EFI or UEFI.
+    - device: disk-sda # sda1
+      size: 1048576 # 1M
+      flag: bios_grub
+      number: 1
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-0
+    - device: disk-sda # sda2
+      size: 951058432 # 900M
+      wipe: superblock
+      flag: ''
+      number: 2
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-1
+    - fstype: ext4 # 格式化sda2
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-0
+    - device: disk-sda # sda3
+      size: 9783214080
+      wipe: superblock
+      flag: ''
+      number: 3
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-2
+    - name: ubuntu-vg # lvm group: ubuntu-vg
+      devices:
+      - partition-2 # use: sda3
+      preserve: false
+      type: lvm_volgroup
+      id: lvm_volgroup-0
+    - name: ubuntu-lv # 创建lv
+      volgroup: lvm_volgroup-0
+      size: 9781116928B
+      wipe: superblock
+      preserve: false
+      type: lvm_partition
+      id: lvm_partition-0
+    - fstype: ext4 # format: lv
+      volume: lvm_partition-0
+      preserve: false
+      type: format
+      id: format-1
+    - path: / # mount lvm
+      device: format-1
+      type: mount
+      id: mount-1
+    - path: /boot
+      device: format-0
+      type: mount
+      id: mount-0
+  updates: security
+  version: 1
