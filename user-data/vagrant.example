@@ -65,7 +65,8 @@ autoinstall:
     > /target/home/vagrant/.ssh/authorized_keys
   - chmod 0600 /target/home/vagrant/.ssh/authorized_keys
   # - chown -R vagrant /target/home/vagrant/.ssh
-  - chown -R 1000 /target/home/vagrant/.ssh
+  # give to vagrant user
+  - chown -R 1000 /target/home/vagrant
   # 优化ssh
   - sed -i 's/#UseDNS no/UseDNS no/g' /target/etc/ssh/sshd_config
   - sed -i 's/#GSSAPIAuthentication no/GSSAPIAuthentication no/g'  /target/etc/ssh/sshd_config
